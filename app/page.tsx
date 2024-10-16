@@ -19,52 +19,53 @@ export default function Home() {
   };
 
   const analyzePlantHealth = async () => {
-    if (!userConsent) {
-      setPlantInfo("Please provide consent to use the AI service before proceeding.");
-      return;
-    }
-    setLoading(true);
-    try {
-      const genAI = new GoogleGenerativeAI("AIzaSyAXSiX_i2qtV1s3o4ocRxa6_L2ceRCKr1A");
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-      });
-  
-      const prompt = `Analyze this plant image and provide the following information:
-      1. Plant identification (if possible)
-      2. Overall health assessment
-      3. Any visible signs of disease, pest infestation, or nutritional deficiencies
-      4. Recommendations for care or treatment if issues are detected
-      5. Detailed solutions for any detected diseases or problems
-      Please be as detailed as possible in your analysis.`;
-  
-      const imageParts = [
-        {
-          codeExecutionResult: await fileToGenerativePart(file), // Correct field name based on the error
-          mimeType: file.type,
-        }
-      ];
-  
-      const result = await model.generateContent([prompt, ...imageParts]);
-      const response = await result.response;
-      const text = await response.text(); // Ensure proper response handling
-      setPlantInfo(text);
-  
-      // Generate Gujarati translation
-      const gujaratiPrompt = `Translate the following plant analysis to Gujarati:
-      ${text}`;
-  
-      const gujaratiResult = await model.generateContent([gujaratiPrompt]);
-      const gujaratiResponse = await gujaratiResult.response;
-      const gujaratiText = await gujaratiResponse.text();
-      setGujaratiInfo(gujaratiText);
-    } catch (error) {
-      console.error("Error analyzing plant health:", error);
-      setPlantInfo("Error analyzing plant health. Please try again.");
-      setGujaratiInfo("ભૂલ: છોડનું સ્વાસ્થ્ય વિશ્લેષણ કરવામાં નિષ્ફળ. કૃપા કરીને ફરી પ્રયાસ કરો.");
-    }
-    setLoading(false);
-  };
+  if (!userConsent) {
+    setPlantInfo("Please provide consent to use the AI service before proceeding.");
+    return;
+  }
+  setLoading(true);
+  try {
+    const genAI = new GoogleGenerativeAI("AIzaSyAXSiX_i2qtV1s3o4ocRxa6_L2ceRCKr1A");
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+    });
+
+    const prompt = `Analyze this plant image and provide the following information:
+    1. Plant identification (if possible)
+    2. Overall health assessment
+    3. Any visible signs of disease, pest infestation, or nutritional deficiencies
+    4. Recommendations for care or treatment if issues are detected
+    5. Detailed solutions for any detected diseases or problems
+    Please be as detailed as possible in your analysis.`;
+
+    const imageParts = [
+      {
+        outcome: "SUCCESS", // Ensure this is correct based on the API documentation
+        output: await fileToGenerativePart(file), // Base64-encoded image data
+        mimeType: file.type,
+      }
+    ];
+
+    const result = await model.generateContent([prompt, ...imageParts]);
+    const response = await result.response;
+    const text = await response.text(); // Make sure to handle this as a Promise
+    setPlantInfo(text);
+
+    // Generate Gujarati translation
+    const gujaratiPrompt = `Translate the following plant analysis to Gujarati:
+    ${text}`;
+
+    const gujaratiResult = await model.generateContent([gujaratiPrompt]);
+    const gujaratiResponse = await gujaratiResult.response;
+    const gujaratiText = await gujaratiResponse.text();
+    setGujaratiInfo(gujaratiText);
+  } catch (error) {
+    console.error("Error analyzing plant health:", error);
+    setPlantInfo("Error analyzing plant health. Please try again.");
+    setGujaratiInfo("ભૂલ: છોડનું સ્વાસ્થ્ય વિશ્લેષણ કરવામાં નિષ્ફળ. કૃપા કરીને ફરી પ્રયાસ કરો.");
+  }
+  setLoading(false);
+};
 
   const fileToGenerativePart = (file) => {
     return new Promise((resolve, reject) => {
