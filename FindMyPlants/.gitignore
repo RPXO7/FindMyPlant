@@ -1,0 +1,21 @@
+# See https://help.github.com/en/articles/ignoring-files#create-a-gitignore-file for more information
+# about .gitignore files
+
+# dependencies
+/node_modules
+
+# production
+/build
+
+# cache
+/.next
+.next/ 
+.vercel
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# testing
+/coverage
+/jest
