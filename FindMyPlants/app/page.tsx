@@ -48,7 +48,7 @@ export default function Home() {
 
     setLoading(true);
     try {
-      const genAI = new GoogleGenerativeAI("AIzaSyAXSiX_i2qtV1s3o4ocRxa6_L2ceRCKr1A");
+      const genAI = new GoogleGenerativeAI("your-google-api-key");
       const model: GenerativeModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const prompt = `Analyze this plant image and provide the following information:
